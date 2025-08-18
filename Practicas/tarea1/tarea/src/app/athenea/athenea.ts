@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './athenea.css'
 })
 export class Athenea {
-  mensaje = 'Mi hija quiero que se llame: Athenea ';
+  mensaje = 'Athenea.';
 }

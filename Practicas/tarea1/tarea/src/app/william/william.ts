@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './william.css'
 })
 export class William {
-  mensaje = 'Mi nombre es: William ';
+  mensaje = 'William Mauricion Hernandez Reyes.';
 }

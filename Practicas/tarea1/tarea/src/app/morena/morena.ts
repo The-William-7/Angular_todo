@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './morena.css'
 })
 export class Morena {
-  mensaje = 'Morena ';
+  mensaje = 'Morena Guadalupe Alvarado de Recinos.';
 }
