@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "clase1": {
+    "videojuegos": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -58,10 +58,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "clase1:build:production"
+              "buildTarget": "videojuegos:build:production"
             },
             "development": {
-              "buildTarget": "clase1:build:development"
+              "buildTarget": "videojuegos:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,6 +88,6 @@
     }
   },
   "cli": {
-    "analytics": "93105b08-b3aa-4fc7-b61c-48db0f17455f"
+    "analytics": "6d76120f-977e-41ce-b1d0-af8708b0496e"
   }
 }
