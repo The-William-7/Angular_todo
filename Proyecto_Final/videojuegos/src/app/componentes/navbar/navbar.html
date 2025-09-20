@@ -1,1 +1,56 @@
-<p>navbar works!</p>
+<nav class="navbar">
+  <div class="nav-container">
+    <!-- Logo -->
+    <div class="logo" routerLink="/">
+      <span class="logo-icon">🎮</span>
+      <span class="logo-text">GameTrackr</span>
+    </div>
+
+    <!-- Menú de Navegación -->
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/" routerLinkActive="active">Inicio</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/catalog" routerLinkActive="active">Catálogo</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/library" routerLinkActive="active">Biblioteca</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/community" routerLinkActive="active">Comunidad</a>
+      </li>
+    </ul>
+
+    <!-- Botones de Autenticación -->
+    <div class="auth-buttons">
+      @if (!isLoggedIn) {
+        <button class="btn btn-outline" (click)="login()">Iniciar Sesión</button>
+        <button class="btn btn-primary" (click)="login()">Registrarse</button>
+      } @else {
+        <div class="user-menu">
+          <div class="user-avatar">
+            {{ userInitials }}
+          </div>
+          <div class="user-dropdown">
+            <span class="user-name">{{ user?.displayName }}</span>
+            <div class="dropdown-content">
+              <a routerLink="/profile" class="dropdown-item">Perfil</a>
+              <a routerLink="/dashboard" class="dropdown-item">Dashboard</a>
+              <a routerLink="/settings" class="dropdown-item">Configuración</a>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item logout-btn" (click)="logout()">Cerrar Sesión</button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Menú Hamburguesa (Mobile) -->
+    <div class="hamburger-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "videojuegos": {
+    "sistema_videojuegos": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -22,7 +22,6 @@
               }
             ],
             "styles": [
-              "src/custom-theme.scss",
               "src/styles.css"
             ],
             "server": "src/main.server.ts",
@@ -59,10 +58,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "videojuegos:build:production"
+              "buildTarget": "sistema_videojuegos:build:production"
             },
             "development": {
-              "buildTarget": "videojuegos:build:development"
+              "buildTarget": "sistema_videojuegos:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -89,6 +88,6 @@
     }
   },
   "cli": {
-    "analytics": "6d76120f-977e-41ce-b1d0-af8708b0496e"
+    "analytics": "964549d7-727a-4012-a12e-b063840e1b22"
   }
 }
