@@ -12,7 +12,12 @@ export class Productos {
   productos: {nombre: string, cantidad: number}[] = [
     {nombre: "Leche", cantidad: 10},
     {nombre: "Pan", cantidad: 5},
-    {nombre: "Arroz", cantidad: 20}
+    {nombre: "Arroz", cantidad: 20},
+    {nombre: "Huevos", cantidad: 2},
+    {nombre: "Azúcar", cantidad: 15},
+    {nombre: "Café", cantidad: 8},
+    {nombre: "Té", cantidad: 3},
+    {nombre: "Mantequilla", cantidad: 12}
   ];
 
   agregar_producto(nombre: string, cantidad: number){
