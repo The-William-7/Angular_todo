@@ -4,62 +4,71 @@
     <h2>🎮 Catálogo de Videojuegos</h2>
     <p class="subtitle">Descubre los mejores juegos para todas las plataformas</p>
   </div>
-  
-  <!-- COMPONENTE CONTROLES UNIFICADO -->
-  <app-filtros-hijo
-    [textoBusqueda]="textoBusqueda"
-    [generos]="generos"
-    [plataformas]="plataformas"
-    [generoSeleccionado]="generoSeleccionado"
-    [plataformaSeleccionada]="plataformaSeleccionada"
-    [precioMaximo]="precioMaximo"
-    [ordenSeleccionado]="ordenSeleccionado"
-    [mostrarSoloOfertas]="mostrarSoloOfertas"
-    (searchChange)="onSearchChange($event)"
-    (filterChange)="onFilterChange($event)"
-    (sortChange)="onSortChange($event)"
-    (limpiarFiltros)="onLimpiarFiltros()">
-  </app-filtros-hijo>
 
-  <!-- INFORMACIÓN DE RESULTADOS -->
-  <div class="results-info">
-    <p>📊 Mostrando {{ juegosFiltrados.length }} de {{ juegos.length }} juegos</p>
+  <!-- LOADING -->
+  <div *ngIf="cargando" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando catálogo...</p>
   </div>
-
-  <!-- COMPONENTE OFERTAS -->
-  <app-ofertas
-    *ngIf="juegosEnOferta.length > 0 && !mostrarSoloOfertas"
-    [juegosEnOferta]="juegosEnOferta"
-    (verDetalles)="onVerDetalles($event)"
-    [calcularDescuento]="calcularDescuento">
-  </app-ofertas>
   
-  <!-- COMPONENTE LISTA DE JUEGOS -->
-  <app-lista-hijo
-    [juegos]="juegosFiltrados"
-    [calcularDescuento]="calcularDescuento"
-    (verDetalles)="onVerDetalles($event)"
-    (agregarCarrito)="onAgregarCarrito($event)"
-    (agregarListaDeseos)="onAgregarListaDeseos($event)"
-    (calificarJuego)="onCalificarJuego($event)">
-  </app-lista-hijo>
+  <!-- CONTENIDO PRINCIPAL -->
+  <div *ngIf="!cargando">
+    <!-- COMPONENTE FILTROS -->
+    <app-filtros-hijo
+      [textoBusqueda]="textoBusqueda"
+      [generos]="generos"
+      [plataformas]="plataformas"
+      [generoSeleccionado]="generoSeleccionado"
+      [plataformaSeleccionada]="plataformaSeleccionada"
+      [precioMaximo]="precioMaximo"
+      [ordenSeleccionado]="ordenSeleccionado"
+      [mostrarSoloOfertas]="mostrarSoloOfertas"
+      (searchChange)="onSearchChange($event)"
+      (filterChange)="onFilterChange($event)"
+      (sortChange)="onSortChange($event)"
+      (limpiarFiltros)="onLimpiarFiltros()">
+    </app-filtros-hijo>
 
-  <!-- MENSAJE SIN RESULTADOS -->
-  <div *ngIf="juegosFiltrados.length === 0" class="no-results">
-    <p>😞 No se encontraron juegos con los filtros seleccionados</p>
-    <button (click)="onLimpiarFiltros()" class="btn btn-primary">
-      Ver todos los juegos
-    </button>
+    <!-- INFORMACIÓN DE RESULTADOS -->
+    <div class="results-info">
+      <p>📊 Mostrando {{ juegosFiltrados.length }} de {{ juegos.length }} juegos</p>
+    </div>
+
+    <!-- COMPONENTE OFERTAS -->
+    <app-ofertas
+      *ngIf="juegosEnOferta.length > 0 && !mostrarSoloOfertas"
+      [juegosEnOferta]="juegosEnOferta"
+      (verDetalles)="onVerDetalles($event)"
+      [calcularDescuento]="calcularDescuento">
+    </app-ofertas>
+    
+    <!-- COMPONENTE LISTA DE JUEGOS -->
+    <app-lista-hijo
+      [juegos]="juegosFiltrados"
+      [calcularDescuento]="calcularDescuento"
+      (verDetalles)="onVerDetalles($event)"
+      (agregarCarrito)="onAgregarCarrito($event)"
+      (agregarListaDeseos)="onAgregarListaDeseos($event)"
+      (calificarJuego)="onCalificarJuego($event)">
+    </app-lista-hijo>
+
+    <!-- MENSAJE SIN RESULTADOS -->
+    <div *ngIf="juegosFiltrados.length === 0" class="no-results">
+      <p>😞 No se encontraron juegos con los filtros seleccionados</p>
+      <button (click)="onLimpiarFiltros()" class="btn btn-primary">
+        Ver todos los juegos
+      </button>
+    </div>
+
+    <!-- COMPONENTE MODAL DETALLES -->
+    <app-funciones
+      *ngIf="juegoSeleccionado"
+      [juego]="juegoSeleccionado"
+      [calcularDescuento]="calcularDescuento"
+      [formatearFecha]="formatearFecha"
+      (cerrar)="onCerrarDetalles()"
+      (agregarCarrito)="onAgregarCarrito($event)"
+      (agregarListaDeseos)="onAgregarListaDeseos($event)">
+    </app-funciones>
   </div>
-
-  <!-- COMPONENTE MODAL DETALLES -->
-  <app-funciones
-    *ngIf="juegoSeleccionado"
-    [juego]="juegoSeleccionado"
-    [calcularDescuento]="calcularDescuento"
-    [formatearFecha]="formatearFecha"
-    (cerrar)="onCerrarDetalles()"
-    (agregarCarrito)="onAgregarCarrito($event)"
-    (agregarListaDeseos)="onAgregarListaDeseos($event)">
-  </app-funciones>
 </div>
