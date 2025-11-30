@@ -1,0 +1,118 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <!-- Logo y Brand -->
+    <div class="nav-brand">
+      <a routerLink="/" class="logo-link">
+        <span class="logo">🎮</span>
+        <span class="brand-name">GameStore</span>
+      </a>
+    </div>
+
+    <!-- Navegación Principal -->
+    <div class="nav-links">
+      <a routerLink="/catalogo" class="nav-link">
+        <span class="nav-icon">🕹️</span>
+        Catálogo
+      </a>
+      
+      <a *ngIf="esAdmin" routerLink="/admin" class="nav-link admin-link">
+        <span class="nav-icon">🛡️</span>
+        Admin
+      </a>
+
+      <!-- Carrito (placeholder) -->
+      <a routerLink="/carrito" class="nav-link cart-link">
+        <span class="nav-icon">🛒</span>
+        Carrito
+        <span class="cart-badge">0</span>
+      </a>
+    </div>
+
+    <!-- Sección Usuario -->
+    <div class="nav-user">
+      <!-- Usuario NO logueado -->
+      <div *ngIf="!estaLogueado" class="auth-buttons">
+        <a routerLink="/login" class="btn btn-outline btn-small">
+          Iniciar Sesión
+        </a>
+        <a routerLink="/registro" class="btn btn-primary btn-small">
+          Registrarse
+        </a>
+      </div>
+
+      <!-- Usuario Logueado -->
+      <div *ngIf="estaLogueado" class="user-menu-container">
+        <button 
+          (click)="toggleMenuUsuario()"
+          class="user-button"
+          [class.active]="mostrarMenuUsuario"
+        >
+          <div class="user-avatar">
+            {{ usuario?.nombre?.charAt(0) }}{{ usuario?.apellido?.charAt(0) }}
+          </div>
+          <span class="user-name">
+            Hola, {{ usuario?.nombre }}
+          </span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+
+        <!-- Menú Desplegable Usuario -->
+        <div 
+          *ngIf="mostrarMenuUsuario"
+          class="user-dropdown"
+          (click)="$event.stopPropagation()"
+        >
+          <!-- Información del usuario -->
+          <div class="user-info">
+            <div class="user-avatar large">
+              {{ usuario?.nombre?.charAt(0) }}{{ usuario?.apellido?.charAt(0) }}
+            </div>
+            <div class="user-details">
+              <strong>{{ usuario?.nombre }} {{ usuario?.apellido }}</strong>
+              <small>{{ usuario?.email }}</small>
+              <span *ngIf="esAdmin" class="admin-badge">Administrador</span>
+            </div>
+          </div>
+
+          <div class="dropdown-divider"></div>
+
+          <!-- Opciones del menú -->
+          <button (click)="irAPerfil()" class="dropdown-item">
+            <span class="item-icon">👤</span>
+            Mi Perfil
+          </button>
+
+          <button *ngIf="esAdmin" (click)="irAAdmin()" class="dropdown-item">
+            <span class="item-icon">🛡️</span>
+            Panel Admin
+          </button>
+
+          <a routerLink="/mis-pedidos" class="dropdown-item">
+            <span class="item-icon">📦</span>
+            Mis Pedidos
+          </a>
+
+          <a routerLink="/lista-deseos" class="dropdown-item">
+            <span class="item-icon">❤️</span>
+            Lista de Deseos
+          </a>
+
+          <div class="dropdown-divider"></div>
+
+          <!-- Cerrar sesión -->
+          <button (click)="logout()" class="dropdown-item logout-item">
+            <span class="item-icon">🚪</span>
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay para cerrar menú -->
+  <div 
+    *ngIf="mostrarMenuUsuario"
+    class="menu-overlay"
+    (click)="cerrarMenuUsuario()"
+  ></div>
+</nav>
