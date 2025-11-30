@@ -1,1 +1,53 @@
-<p>catalogo works!</p>
+<div class="catalog">
+  <h2>🎮 Catálogo de Juegos</h2>
+  
+  <!-- BARRA DE BÚSQUEDA -->
+  <div class="search-bar">
+    <input 
+      type="text" 
+      [(ngModel)]="textoBusqueda" 
+      placeholder="🔍 Buscar juegos por nombre, género o plataforma..."
+      class="search-input"
+    >
+    <button class="btn btn-search">Buscar</button>
+  </div>
+
+  <!-- CONTADOR DE RESULTADOS -->
+  <div class="results-info">
+    <p>Mostrando {{ buscarJuegos().length }} juegos</p>
+  </div>
+  
+  <!-- LISTA DE JUEGOS (FILTRADA) -->
+  <div class="game-list">
+    <div *ngFor="let juego of buscarJuegos()" class="game-card">
+      <img [src]="juego.imagen" [alt]="juego.nombre" class="game-image">
+      
+      <div class="game-info">
+        <h3>{{ juego.nombre }}</h3>
+        <p><strong>Plataforma:</strong> {{ juego.plataforma }}</p>
+        <p><strong>Género:</strong> {{ juego.genero }}</p>
+        <p><strong>Precio:</strong> ${{ juego.precio }}</p>
+        <p><strong>Rating:</strong> 
+          <span *ngFor="let star of [1,2,3,4,5]">⭐</span>
+        </p>
+      </div>
+      
+      <div class="game-actions">
+        <button (click)="verDetalles(juego)" class="btn btn-info">
+          👀 Ver Detalles
+        </button>
+        <button class="btn btn-success">
+          🛒 Comprar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENSAJE SI NO HAY RESULTADOS -->
+  <div *ngIf="buscarJuegos().length === 0" class="no-results">
+    <p>😞 No se encontraron juegos con "{{ textoBusqueda }}"</p>
+    <button (click)="textoBusqueda = ''" class="btn btn-primary">
+      Ver todos los juegos
+    </button>
+  </div>
+</div>
