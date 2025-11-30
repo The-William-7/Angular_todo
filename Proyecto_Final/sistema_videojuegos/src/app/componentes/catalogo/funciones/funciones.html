@@ -1,0 +1,62 @@
+<div class="modal-overlay" (click)="onCerrar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="onCerrar()">×</button>
+    
+    <div class="modal-body">
+      <div class="modal-image">
+        <img [src]="juego.imagen" [alt]="juego.nombre">
+      </div>
+      
+      <div class="modal-info">
+        <h2>{{ juego.nombre }}</h2>
+        
+        <div class="modal-details">
+          <p><strong>Plataforma:</strong> {{ juego.plataforma }}</p>
+          <p><strong>Género:</strong> {{ juego.genero }}</p>
+          <p><strong>Fecha de Lanzamiento:</strong> {{ formatearFecha(juego.fechaLanzamiento) }}</p>
+          <p><strong>Rating:</strong> 
+            <span class="stars">
+              <span *ngFor="let star of [1,2,3,4,5]" class="star active">⭐</span>
+            </span>
+            ({{ juego.rating }}/5)
+          </p>
+          
+          <!-- Precios -->
+          <div class="modal-precio" *ngIf="juego.enOferta">
+            <span class="precio-original">${{ juego.precioOriginal }}</span>
+            <span class="precio-oferta">${{ juego.precio }}</span>
+            <span class="descuento">-{{ calcularDescuento(juego) }}%</span>
+          </div>
+          <div class="modal-precio" *ngIf="!juego.enOferta">
+            <span class="price">{{ juego.precio === 0 ? 'GRATIS' : '$' + juego.precio }}</span>
+          </div>
+
+          <!-- Stock -->
+          <p><strong>Disponibilidad:</strong> 
+            <span [class.stock-bajo]="juego.stock < 5" 
+                  [class.stock-medio]="juego.stock >= 5 && juego.stock < 15"
+                  class="stock-info">
+              {{ juego.stock }} unidades en stock
+            </span>
+          </p>
+        </div>
+
+        <!-- Descripción -->
+        <div class="modal-descripcion">
+          <h4>Descripción</h4>
+          <p>{{ juego.descripcion }}</p>
+        </div>
+
+        <!-- Acciones Modal -->
+        <div class="modal-actions">
+          <button (click)="onAgregarCarrito()" class="btn btn-success btn-large">
+            🛒 Agregar al Carrito - ${{ juego.precio }}
+          </button>
+          <button (click)="onAgregarListaDeseos()" class="btn btn-wishlist">
+            ❤️ Lista de Deseos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

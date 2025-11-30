@@ -1,1 +1,57 @@
-<p>lista-hijo works!</p>
+<div class="game-list">
+  <div *ngFor="let juego of juegos" class="game-card">
+    <!-- Badge Oferta -->
+    <div *ngIf="juego.enOferta" class="descuento-badge">-{{ calcularDescuento(juego) }}%</div>
+    
+    <!-- Imagen del Juego -->
+    <img [src]="juego.imagen" [alt]="juego.nombre" class="game-image">
+    
+    <!-- Información del Juego -->
+    <div class="game-info">
+      <h3>{{ juego.nombre }}</h3>
+      <p><strong>Plataforma:</strong> {{ juego.plataforma }}</p>
+      <p><strong>Género:</strong> {{ juego.genero }}</p>
+      
+      <!-- Precios -->
+      <p><strong>Precio:</strong> 
+        <span *ngIf="juego.enOferta" class="precio-original">${{ juego.precioOriginal }}</span>
+        <span [class.free]="juego.precio === 0" class="price">
+          {{ juego.precio === 0 ? 'GRATIS' : '$' + juego.precio }}
+        </span>
+      </p>
+
+      <!-- Rating -->
+      <p><strong>Rating:</strong> 
+        <span class="stars">
+          <span *ngFor="let star of [1,2,3,4,5]" 
+                (click)="onCalificarJuego(juego, star)"
+                class="star clickable"
+                [class.active]="star <= juego.rating">
+            {{ star <= juego.rating ? '⭐' : '☆' }}
+          </span>
+        </span>
+        ({{ juego.rating }}/5)
+      </p>
+
+      <!-- Stock -->
+      <p><strong>Stock:</strong> 
+        <span [class.stock-bajo]="juego.stock < 5" [class.stock-medio]="juego.stock >= 5 && juego.stock < 15">
+          {{ juego.stock }} unidades
+        </span>
+      </p>
+    </div>
+    
+    <!-- Acciones -->
+    <div class="game-actions">
+      <button (click)="verDetalles.emit(juego)" class="btn btn-info">
+        👀 Detalles
+      </button>
+      <button (click)="agregarCarrito.emit(juego)" class="btn btn-success">
+        🛒 Comprar
+      </button>
+      <button (click)="agregarListaDeseos.emit(juego)" class="btn btn-wishlist">
+        ❤️ Deseos
+      </button>
+    </div>
+  </div>
+</div>

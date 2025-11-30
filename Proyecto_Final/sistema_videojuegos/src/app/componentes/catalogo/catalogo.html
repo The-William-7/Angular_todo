@@ -5,253 +5,61 @@
     <p class="subtitle">Descubre los mejores juegos para todas las plataformas</p>
   </div>
   
-  <!-- BARRA DE BÚSQUEDA -->
-  <div class="search-bar">
-    <input 
-      type="text" 
-      [(ngModel)]="textoBusqueda" 
-      placeholder="🔍 Buscar juegos por nombre, género o plataforma..."
-      class="search-input"
-    >
-  </div>
+  <!-- COMPONENTE CONTROLES UNIFICADO -->
+  <app-filtros-hijo
+    [textoBusqueda]="textoBusqueda"
+    [generos]="generos"
+    [plataformas]="plataformas"
+    [generoSeleccionado]="generoSeleccionado"
+    [plataformaSeleccionada]="plataformaSeleccionada"
+    [precioMaximo]="precioMaximo"
+    [ordenSeleccionado]="ordenSeleccionado"
+    [mostrarSoloOfertas]="mostrarSoloOfertas"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
+    (sortChange)="onSortChange($event)"
+    (limpiarFiltros)="onLimpiarFiltros()">
+  </app-filtros-hijo>
 
-  <!-- PANEL DE CONTROLES -->
-  <div class="controls-panel">
-    <!-- FILTROS -->
-    <div class="filters-section">
-      <h3>🔧 Filtros</h3>
-      
-      <div class="filters-grid">
-        <!-- Filtro por Género -->
-        <div class="filter-group">
-          <label>🎭 Género:</label>
-          <select [(ngModel)]="generoSeleccionado" class="filter-select">
-            <option *ngFor="let genero of generos" [value]="genero">
-              {{ genero === 'todos' ? 'Todos los géneros' : genero }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Filtro por Plataforma -->
-        <div class="filter-group">
-          <label>🎮 Plataforma:</label>
-          <select [(ngModel)]="plataformaSeleccionada" class="filter-select">
-            <option *ngFor="let plataforma of plataformas" [value]="plataforma">
-              {{ plataforma === 'todas' ? 'Todas las plataformas' : plataforma }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Filtro por Precio -->
-        <div class="filter-group">
-          <label>💰 Precio máximo: ${{ precioMaximo }}</label>
-          <input 
-            type="range" 
-            [(ngModel)]="precioMaximo" 
-            min="0" 
-            max="100" 
-            step="10"
-            class="price-slider"
-          >
-          <div class="price-labels">
-            <span>$0</span>
-            <span>$50</span>
-            <span>$100</span>
-          </div>
-        </div>
-
-        <!-- Filtro Ofertas -->
-        <div class="filter-group">
-          <label class="checkbox-label">
-            <input type="checkbox" [(ngModel)]="mostrarSoloOfertas">
-            🏷️ Ver solo ofertas
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!-- ORDENAMIENTO -->
-    <div class="sorting-section">
-      <h3>📊 Ordenar por</h3>
-      <div class="sort-options">
-        <select [(ngModel)]="ordenSeleccionado" class="sort-select">
-          <option *ngFor="let opcion of opcionesOrden" [value]="opcion.valor">
-            {{ opcion.texto }}
-          </option>
-        </select>
-      </div>
-    </div>
-
-    <!-- ACCIONES -->
-    <div class="actions-section">
-      <button (click)="limpiarFiltros()" class="btn btn-clear">
-        🗑️ Limpiar Todo
-      </button>
-    </div>
-  </div>
-
-  <!-- CONTADOR DE RESULTADOS -->
+  <!-- INFORMACIÓN DE RESULTADOS -->
   <div class="results-info">
-    <p>📊 Mostrando {{ buscarJuegos().length }} de {{ juegos.length }} juegos</p>
-    <div class="active-filters" *ngIf="generoSeleccionado !== 'todos' || plataformaSeleccionada !== 'todas' || precioMaximo < 100 || mostrarSoloOfertas">
-      <small>
-        Filtros activos: 
-        <span *ngIf="generoSeleccionado !== 'todos'">{{ generoSeleccionado }}</span>
-        <span *ngIf="plataformaSeleccionada !== 'todas'"> • {{ plataformaSeleccionada }}</span>
-        <span *ngIf="precioMaximo < 100"> • Hasta ${{ precioMaximo }}</span>
-        <span *ngIf="mostrarSoloOfertas"> • Solo ofertas</span>
-        <span> • Orden: {{ textoOrdenActual }}</span>
-      </small>
-    </div>
+    <p>📊 Mostrando {{ juegosFiltrados.length }} de {{ juegos.length }} juegos</p>
   </div>
 
-  <!-- SECCIÓN OFERTAS ESPECIALES -->
-  <div class="ofertas-section" *ngIf="juegosEnOferta.length > 0 && !mostrarSoloOfertas">
-    <h3>🔥 Ofertas Especiales</h3>
-    <div class="ofertas-grid">
-      <div *ngFor="let juego of juegosEnOferta.slice(0, 3)" class="oferta-card">
-        <div class="descuento-badge">-{{ calcularDescuento(juego) }}%</div>
-        <img [src]="juego.imagen" [alt]="juego.nombre" class="game-image">
-        <div class="oferta-info">
-          <h4>{{ juego.nombre }}</h4>
-          <div class="precios">
-            <span class="precio-original">${{ juego.precioOriginal }}</span>
-            <span class="precio-oferta">${{ juego.precio }}</span>
-          </div>
-          <button (click)="verDetalles(juego)" class="btn btn-oferta">Ver Oferta</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- COMPONENTE OFERTAS -->
+  <app-ofertas
+    *ngIf="juegosEnOferta.length > 0 && !mostrarSoloOfertas"
+    [juegosEnOferta]="juegosEnOferta"
+    (verDetalles)="onVerDetalles($event)"
+    [calcularDescuento]="calcularDescuento">
+  </app-ofertas>
   
-  <!-- LISTA DE JUEGOS -->
-  <div class="game-list">
-    <div *ngFor="let juego of buscarJuegos()" class="game-card">
-      <!-- Badge Oferta -->
-      <div *ngIf="juego.enOferta" class="descuento-badge">-{{ calcularDescuento(juego) }}%</div>
-      
-      <!-- Imagen del Juego -->
-      <img [src]="juego.imagen" [alt]="juego.nombre" class="game-image">
-      
-      <!-- Información del Juego -->
-      <div class="game-info">
-        <h3>{{ juego.nombre }}</h3>
-        <p><strong>Plataforma:</strong> {{ juego.plataforma }}</p>
-        <p><strong>Género:</strong> {{ juego.genero }}</p>
-        
-        <!-- Precios -->
-        <p><strong>Precio:</strong> 
-          <span *ngIf="juego.enOferta" class="precio-original">${{ juego.precioOriginal }}</span>
-          <span [class.free]="juego.precio === 0" class="price">
-            {{ juego.precio === 0 ? 'GRATIS' : '$' + juego.precio }}
-          </span>
-        </p>
-
-        <!-- Rating -->
-        <p><strong>Rating:</strong> 
-          <span class="stars">
-            <span *ngFor="let star of [1,2,3,4,5]" 
-                  (click)="calificarJuego(juego, star)"
-                  class="star clickable"
-                  [class.active]="star <= juego.rating">
-              {{ star <= juego.rating ? '⭐' : '☆' }}
-            </span>
-          </span>
-          ({{ juego.rating }}/5)
-        </p>
-
-        <!-- Stock -->
-        <p><strong>Stock:</strong> 
-          <span [class.stock-bajo]="juego.stock < 5" [class.stock-medio]="juego.stock >= 5 && juego.stock < 15">
-            {{ juego.stock }} unidades
-          </span>
-        </p>
-      </div>
-      
-      <!-- Acciones -->
-      <div class="game-actions">
-        <button (click)="verDetalles(juego)" class="btn btn-info">
-          👀 Detalles
-        </button>
-        <button (click)="agregarAlCarrito(juego)" class="btn btn-success">
-          🛒 Comprar
-        </button>
-        <button (click)="agregarListaDeseos(juego)" class="btn btn-wishlist">
-          ❤️ Deseos
-        </button>
-      </div>
-    </div>
-  </div>
+  <!-- COMPONENTE LISTA DE JUEGOS -->
+  <app-lista-hijo
+    [juegos]="juegosFiltrados"
+    [calcularDescuento]="calcularDescuento"
+    (verDetalles)="onVerDetalles($event)"
+    (agregarCarrito)="onAgregarCarrito($event)"
+    (agregarListaDeseos)="onAgregarListaDeseos($event)"
+    (calificarJuego)="onCalificarJuego($event)">
+  </app-lista-hijo>
 
   <!-- MENSAJE SIN RESULTADOS -->
-  <div *ngIf="buscarJuegos().length === 0" class="no-results">
+  <div *ngIf="juegosFiltrados.length === 0" class="no-results">
     <p>😞 No se encontraron juegos con los filtros seleccionados</p>
-    <button (click)="limpiarFiltros()" class="btn btn-primary">
+    <button (click)="onLimpiarFiltros()" class="btn btn-primary">
       Ver todos los juegos
     </button>
   </div>
 
-  <!-- MODAL DETALLES DEL JUEGO -->
-  <div *ngIf="juegoSeleccionado" class="modal-overlay" (click)="cerrarDetalles()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <button class="close-btn" (click)="cerrarDetalles()">×</button>
-      
-      <div class="modal-body">
-        <div class="modal-image">
-          <img [src]="juegoSeleccionado.imagen" [alt]="juegoSeleccionado.nombre">
-        </div>
-        
-        <div class="modal-info">
-          <h2>{{ juegoSeleccionado.nombre }}</h2>
-          
-          <div class="modal-details">
-            <p><strong>Plataforma:</strong> {{ juegoSeleccionado.plataforma }}</p>
-            <p><strong>Género:</strong> {{ juegoSeleccionado.genero }}</p>
-            <p><strong>Fecha de Lanzamiento:</strong> {{ formatearFecha(juegoSeleccionado.fechaLanzamiento) }}</p>
-            <p><strong>Rating:</strong> 
-              <span class="stars">
-                <span *ngFor="let star of [1,2,3,4,5]" class="star active">⭐</span>
-              </span>
-              ({{ juegoSeleccionado.rating }}/5)
-            </p>
-            
-            <!-- Precios -->
-            <div class="modal-precio" *ngIf="juegoSeleccionado.enOferta">
-              <span class="precio-original">${{ juegoSeleccionado.precioOriginal }}</span>
-              <span class="precio-oferta">${{ juegoSeleccionado.precio }}</span>
-              <span class="descuento">-{{ calcularDescuento(juegoSeleccionado) }}%</span>
-            </div>
-            <div class="modal-precio" *ngIf="!juegoSeleccionado.enOferta">
-              <span class="price">{{ juegoSeleccionado.precio === 0 ? 'GRATIS' : '$' + juegoSeleccionado.precio }}</span>
-            </div>
-
-            <!-- Stock -->
-            <p><strong>Disponibilidad:</strong> 
-              <span [class.stock-bajo]="juegoSeleccionado.stock < 5" 
-                    [class.stock-medio]="juegoSeleccionado.stock >= 5 && juegoSeleccionado.stock < 15"
-                    class="stock-info">
-                {{ juegoSeleccionado.stock }} unidades en stock
-              </span>
-            </p>
-          </div>
-
-          <!-- Descripción -->
-          <div class="modal-descripcion">
-            <h4>Descripción</h4>
-            <p>{{ juegoSeleccionado.descripcion }}</p>
-          </div>
-
-          <!-- Acciones Modal -->
-          <div class="modal-actions">
-            <button (click)="agregarAlCarrito(juegoSeleccionado)" class="btn btn-success btn-large">
-              🛒 Agregar al Carrito - ${{ juegoSeleccionado.precio }}
-            </button>
-            <button (click)="agregarListaDeseos(juegoSeleccionado)" class="btn btn-wishlist">
-              ❤️ Lista de Deseos
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- COMPONENTE MODAL DETALLES -->
+  <app-funciones
+    *ngIf="juegoSeleccionado"
+    [juego]="juegoSeleccionado"
+    [calcularDescuento]="calcularDescuento"
+    [formatearFecha]="formatearFecha"
+    (cerrar)="onCerrarDetalles()"
+    (agregarCarrito)="onAgregarCarrito($event)"
+    (agregarListaDeseos)="onAgregarListaDeseos($event)">
+  </app-funciones>
 </div>

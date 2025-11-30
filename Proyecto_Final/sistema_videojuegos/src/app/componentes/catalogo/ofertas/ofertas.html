@@ -1,0 +1,19 @@
+<div class="ofertas-section">
+  <h3>🔥 Ofertas Especiales</h3>
+  <div class="ofertas-grid">
+    <div *ngFor="let juego of juegosEnOferta.slice(0, 3)" class="oferta-card">
+      <div class="descuento-badge">-{{ calcularDescuento(juego) }}%</div>
+      <img [src]="juego.imagen" [alt]="juego.nombre" class="game-image">
+      <div class="oferta-info">
+        <h4>{{ juego.nombre }}</h4>
+        <div class="precios">
+          <span class="precio-original">${{ juego.precioOriginal }}</span>
+          <span class="precio-oferta">${{ juego.precio }}</span>
+        </div>
+        <button (click)="verDetalles.emit(juego)" class="btn btn-oferta">
+          Ver Oferta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
