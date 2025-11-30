@@ -1,1 +1,98 @@
-<p>filtros-hijo works!</p>
+<div class="catalog-controls">
+  <!-- BARRA DE BÚSQUEDA -->
+  <div class="search-bar">
+    <input 
+      type="text" 
+      [(ngModel)]="textoBusqueda" 
+      (input)="onSearchChange()"
+      placeholder="🔍 Buscar juegos por nombre, género o plataforma..."
+      class="search-input"
+    >
+  </div>
+
+  <!-- PANEL DE CONTROLES -->
+  <div class="controls-panel">
+    <!-- SECCIÓN FILTROS -->
+    <div class="filters-section">
+      <h3>🔧 Filtros</h3>
+      
+      <div class="filters-grid">
+        <!-- Filtro por Género -->
+        <div class="filter-group">
+          <label>🎭 Género:</label>
+          <select 
+            [(ngModel)]="generoSeleccionado" 
+            (change)="onFilterChange()"
+            class="filter-select">
+            <option *ngFor="let genero of generos" [value]="genero">
+              {{ genero === 'todos' ? 'Todos los géneros' : genero }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtro por Plataforma -->
+        <div class="filter-group">
+          <label>🎮 Plataforma:</label>
+          <select 
+            [(ngModel)]="plataformaSeleccionada" 
+            (change)="onFilterChange()"
+            class="filter-select">
+            <option *ngFor="let plataforma of plataformas" [value]="plataforma">
+              {{ plataforma === 'todas' ? 'Todas las plataformas' : plataforma }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtro por Precio -->
+        <div class="filter-group">
+          <label>💰 Precio máximo: ${{ precioMaximo }}</label>
+          <input 
+            type="range" 
+            [(ngModel)]="precioMaximo" 
+            (input)="onFilterChange()"
+            min="0" 
+            max="100" 
+            step="10"
+            class="price-slider"
+          >
+          <div class="price-labels">
+            <span>$0</span>
+            <span>$50</span>
+            <span>$100</span>
+          </div>
+        </div>
+
+        <!-- Filtro Ofertas -->
+        <div class="filter-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="mostrarSoloOfertas" 
+              (change)="onFilterChange()">
+            🏷️ Ver solo ofertas
+          </label>
+        </div>
+      </div>
+
+      <!-- Botón limpiar filtros -->
+      <button (click)="onLimpiarFiltros()" class="btn btn-clear">
+        🗑️ Limpiar Todo
+      </button>
+    </div>
+
+    <!-- SECCIÓN ORDENAMIENTO -->
+    <div class="sorting-section">
+      <h3>📊 Ordenar por</h3>
+      <div class="sort-options">
+        <select 
+          [(ngModel)]="ordenSeleccionado" 
+          (change)="onSortChange()"
+          class="sort-select">
+          <option *ngFor="let opcion of opcionesOrden" [value]="opcion.valor">
+            {{ opcion.texto }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

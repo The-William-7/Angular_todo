@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CatalogoFiltrosHijo } from './catalogo-filtros-hijo/catalogo-filtros-hijo';
+import { FiltrosHijo } from './filtros-hijo/filtros-hijo';
 
 @Component({
   selector: 'app-catalogo',
-  imports: [FormsModule, CommonModule, CatalogoFiltrosHijo],
+  imports: [FormsModule, CommonModule, FiltrosHijo],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
