@@ -1,1 +1,483 @@
-<p>perfil works!</p>
+<div class="perfil-container">
+  <div class="perfil-header">
+    <h1>👤 Mi Perfil</h1>
+    <p>Gestiona tu información personal, direcciones y métodos de pago</p>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="mensajeExito" class="alert alert-success">
+    ✅ {{ mensajeExito }}
+  </div>
+
+  <div *ngIf="mensajeError" class="alert alert-error">
+    ❌ {{ mensajeError }}
+  </div>
+
+  <div class="perfil-content" *ngIf="usuario">
+    <!-- Navegación lateral -->
+    <div class="perfil-sidebar">
+      <button 
+        (click)="cambiarSeccion('perfil')" 
+        class="sidebar-btn"
+        [class.active]="seccionActiva === 'perfil'"
+      >
+        👤 Información Personal
+      </button>
+      
+      <button 
+        (click)="cambiarSeccion('direcciones')" 
+        class="sidebar-btn"
+        [class.active]="seccionActiva === 'direcciones'"
+      >
+        🏠 Direcciones
+      </button>
+      
+      <button 
+        (click)="cambiarSeccion('pagos')" 
+        class="sidebar-btn"
+        [class.active]="seccionActiva === 'pagos'"
+      >
+        💳 Métodos de Pago
+      </button>
+      
+      <button 
+        (click)="cambiarSeccion('estadisticas')" 
+        class="sidebar-btn"
+        [class.active]="seccionActiva === 'estadisticas'"
+      >
+        📊 Mis Estadísticas
+      </button>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="perfil-main">
+      <!-- SECCIÓN INFORMACIÓN PERSONAL -->
+      <div *ngIf="seccionActiva === 'perfil'" class="seccion-content">
+        <div class="seccion-header">
+          <h2>👤 Información Personal</h2>
+          <button 
+            *ngIf="!editandoPerfil"
+            (click)="iniciarEdicionPerfil()"
+            class="btn btn-outline"
+          >
+            ✏️ Editar
+          </button>
+        </div>
+
+        <div *ngIf="!editandoPerfil" class="info-display">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Nombre completo</label>
+              <p>{{ usuario.nombre }} {{ usuario.apellido }}</p>
+            </div>
+            <div class="info-item">
+              <label>Email</label>
+              <p>{{ usuario.email }}</p>
+            </div>
+            <div class="info-item">
+              <label>Teléfono</label>
+              <p>{{ usuario.telefono || 'No especificado' }}</p>
+            </div>
+            <div class="info-item">
+              <label>Fecha de nacimiento</label>
+              <p>{{ usuario.fechaNacimiento ? (usuario.fechaNacimiento | date:'longDate') : 'No especificada' }}</p>
+            </div>
+            <div class="info-item">
+              <label>Fecha de registro</label>
+              <p>{{ usuario.fechaRegistro | date:'longDate' }}</p>
+            </div>
+            <div class="info-item">
+              <label>Rol</label>
+              <p>
+                <span [class]="usuario.rol === 'admin' ? 'badge-admin' : 'badge-user'">
+                  {{ usuario.rol === 'admin' ? '🛡️ Administrador' : '👤 Usuario' }}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de edición -->
+        <form *ngIf="editandoPerfil" (ngSubmit)="guardarPerfil()" class="edit-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre *</label>
+              <input
+                type="text"
+                [(ngModel)]="datosPerfilTemp.nombre"
+                name="nombre"
+                required
+                class="form-input"
+              >
+            </div>
+            <div class="form-group">
+              <label>Apellido *</label>
+              <input
+                type="text"
+                [(ngModel)]="datosPerfilTemp.apellido"
+                name="apellido"
+                required
+                class="form-input"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              [value]="usuario.email"
+              disabled
+              class="form-input"
+            >
+            <small class="helper-text">El email no se puede modificar</small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input
+                type="tel"
+                [(ngModel)]="datosPerfilTemp.telefono"
+                name="telefono"
+                class="form-input"
+              >
+            </div>
+            <div class="form-group">
+              <label>Fecha de nacimiento</label>
+              <input
+                type="date"
+                [value]="datosPerfilTemp.fechaNacimiento | date:'yyyy-MM-dd'"
+                (input)="datosPerfilTemp.fechaNacimiento = $any($event.target).valueAsDate"
+                class="form-input"
+              >
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="cargando">
+              <span *ngIf="cargando" class="spinner"></span>
+              {{ cargando ? 'Guardando...' : '💾 Guardar Cambios' }}
+            </button>
+            <button type="button" (click)="cancelarEdicionPerfil()" class="btn btn-outline">
+              ❌ Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- SECCIÓN DIRECCIONES -->
+      <div *ngIf="seccionActiva === 'direcciones'" class="seccion-content">
+        <div class="seccion-header">
+          <h2>🏠 Mis Direcciones</h2>
+          <button 
+            (click)="iniciarEdicionDireccion()"
+            class="btn btn-primary"
+          >
+            ➕ Agregar Dirección
+          </button>
+        </div>
+
+        <!-- Lista de direcciones -->
+        <div *ngIf="!editandoDireccion && usuario.direcciones && usuario.direcciones.length > 0" class="items-list">
+          <div *ngFor="let direccion of usuario.direcciones" class="item-card">
+            <div class="item-content">
+              <div class="item-header">
+                <h4>{{ direccion.nombre }}</h4>
+                <span *ngIf="direccion.esPrincipal" class="badge-primary">Principal</span>
+              </div>
+              <p>{{ direccion.direccion }}</p>
+              <p>{{ direccion.ciudad }}, {{ direccion.codigoPostal }}</p>
+              <p>{{ direccion.pais }}</p>
+            </div>
+            <div class="item-actions">
+              <button 
+                (click)="iniciarEdicionDireccion(direccion)"
+                class="btn btn-small btn-outline"
+              >
+                ✏️ Editar
+              </button>
+              <button 
+                (click)="eliminarDireccion(direccion.id)"
+                class="btn btn-small btn-danger"
+              >
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!editandoDireccion && (!usuario.direcciones || usuario.direcciones.length === 0)" class="empty-state">
+          <p>📭 No tienes direcciones guardadas</p>
+          <p>Agrega una dirección para recibir tus compras</p>
+        </div>
+
+        <!-- Formulario de dirección -->
+        <form *ngIf="editandoDireccion" (ngSubmit)="guardarDireccion()" class="edit-form">
+          <div class="form-group">
+            <label>Nombre de la dirección *</label>
+            <input
+              type="text"
+              [(ngModel)]="direccionTemp.nombre"
+              name="nombre"
+              placeholder="Ej: Casa, Trabajo"
+              required
+              class="form-input"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Dirección completa *</label>
+            <input
+              type="text"
+              [(ngModel)]="direccionTemp.direccion"
+              name="direccion"
+              placeholder="Calle, número, colonia"
+              required
+              class="form-input"
+            >
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ciudad *</label>
+              <input
+                type="text"
+                [(ngModel)]="direccionTemp.ciudad"
+                name="ciudad"
+                required
+                class="form-input"
+              >
+            </div>
+            <div class="form-group">
+              <label>Código Postal *</label>
+              <input
+                type="text"
+                [(ngModel)]="direccionTemp.codigoPostal"
+                name="codigoPostal"
+                required
+                class="form-input"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>País *</label>
+            <select
+              [(ngModel)]="direccionTemp.pais"
+              name="pais"
+              required
+              class="form-input"
+            >
+              <option value="México">México</option>
+              <option value="Estados Unidos">Estados Unidos</option>
+              <option value="España">España</option>
+              <option value="Argentina">Argentina</option>
+              <option value="Colombia">Colombia</option>
+            </select>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="direccionTemp.esPrincipal"
+                name="esPrincipal"
+              >
+              <span class="checkmark"></span>
+              Establecer como dirección principal
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="cargando">
+              <span *ngIf="cargando" class="spinner"></span>
+              {{ cargando ? 'Guardando...' : '💾 Guardar Dirección' }}
+            </button>
+            <button type="button" (click)="cancelarEdicionDireccion()" class="btn btn-outline">
+              ❌ Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- SECCIÓN MÉTODOS DE PAGO -->
+      <div *ngIf="seccionActiva === 'pagos'" class="seccion-content">
+        <div class="seccion-header">
+          <h2>💳 Métodos de Pago</h2>
+          <button 
+            (click)="iniciarEdicionMetodoPago()"
+            class="btn btn-primary"
+          >
+            ➕ Agregar Método de Pago
+          </button>
+        </div>
+
+        <!-- Lista de métodos de pago -->
+        <div *ngIf="!editandoMetodoPago && usuario.metodosPago && usuario.metodosPago.length > 0" class="items-list">
+          <div *ngFor="let metodo of usuario.metodosPago" class="item-card">
+            <div class="item-content">
+              <div class="item-header">
+                <h4>
+                  {{ metodo.tipo === 'tarjeta' ? '💳 Tarjeta' : '📧 PayPal' }}
+                </h4>
+                <span *ngIf="metodo.esPrincipal" class="badge-primary">Principal</span>
+              </div>
+              <p *ngIf="metodo.tipo === 'tarjeta'">
+                **** **** **** {{ metodo.ultimosDigitos }}
+              </p>
+              <p *ngIf="metodo.tipo === 'tarjeta'">
+                Expira: {{ metodo.fechaExpiracion }}
+              </p>
+              <p *ngIf="metodo.tipo === 'paypal'">
+                {{ usuario.email }}
+              </p>
+            </div>
+            <div class="item-actions">
+              <button 
+                (click)="iniciarEdicionMetodoPago(metodo)"
+                class="btn btn-small btn-outline"
+              >
+                ✏️ Editar
+              </button>
+              <button 
+                (click)="eliminarMetodoPago(metodo.id)"
+                class="btn btn-small btn-danger"
+              >
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!editandoMetodoPago && (!usuario.metodosPago || usuario.metodosPago.length === 0)" class="empty-state">
+          <p>💳 No tienes métodos de pago guardados</p>
+          <p>Agrega un método de pago para realizar compras más rápido</p>
+        </div>
+
+        <!-- Formulario de método de pago -->
+        <form *ngIf="editandoMetodoPago" (ngSubmit)="guardarMetodoPago()" class="edit-form">
+          <div class="form-group">
+            <label>Tipo de método *</label>
+            <select
+              [(ngModel)]="metodoPagoTemp.tipo"
+              name="tipo"
+              required
+              class="form-input"
+            >
+              <option value="tarjeta">💳 Tarjeta de crédito/débito</option>
+              <option value="paypal">📧 PayPal</option>
+            </select>
+          </div>
+
+          <div *ngIf="metodoPagoTemp.tipo === 'tarjeta'">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Últimos 4 dígitos *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="metodoPagoTemp.ultimosDigitos"
+                  name="ultimosDigitos"
+                  placeholder="1234"
+                  maxlength="4"
+                  required
+                  class="form-input"
+                >
+              </div>
+              <div class="form-group">
+                <label>Fecha de expiración *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="metodoPagoTemp.fechaExpiracion"
+                  name="fechaExpiracion"
+                  placeholder="MM/AA"
+                  required
+                  class="form-input"
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="metodoPagoTemp.esPrincipal"
+                name="esPrincipal"
+              >
+              <span class="checkmark"></span>
+              Establecer como método de pago principal
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="cargando">
+              <span *ngIf="cargando" class="spinner"></span>
+              {{ cargando ? 'Guardando...' : '💾 Guardar Método' }}
+            </button>
+            <button type="button" (click)="cancelarEdicionMetodoPago()" class="btn btn-outline">
+              ❌ Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- SECCIÓN ESTADÍSTICAS -->
+      <div *ngIf="seccionActiva === 'estadisticas'" class="seccion-content">
+        <div class="seccion-header">
+          <h2>📊 Mis Estadísticas</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🕹️</div>
+            <div class="stat-info">
+              <h3>{{ getEstadisticas().juegosComprados }}</h3>
+              <p>Juegos Comprados</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-info">
+              <h3>{{ getEstadisticas().juegosCompletados }}</h3>
+              <p>Juegos Completados</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⏰</div>
+            <div class="stat-info">
+              <h3>{{ getEstadisticas().tiempoJugado }}</h3>
+              <p>Tiempo Jugado</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-info">
+              <h3>{{ getEstadisticas().generoFavorito }}</h3>
+              <p>Género Favorito</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-message">
+          <p>📈 Estas estadísticas se actualizarán automáticamente con tu actividad en GameStore</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usuario no logueado -->
+  <div *ngIf="!usuario" class="not-logged-in">
+    <div class="not-logged-content">
+      <h2>🔒 Inicia sesión</h2>
+      <p>Para acceder a tu perfil, necesitas iniciar sesión</p>
+      <div class="auth-buttons">
+        <a routerLink="/login" class="btn btn-primary">Iniciar Sesión</a>
+        <a routerLink="/registro" class="btn btn-outline">Crear Cuenta</a>
+      </div>
+    </div>
+  </div>
+</div>

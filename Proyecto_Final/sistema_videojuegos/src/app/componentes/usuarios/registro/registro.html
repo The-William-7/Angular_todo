@@ -1,1 +1,200 @@
-<p>registro works!</p>
+<div class="registro-container">
+  <div class="registro-card">
+    <div class="registro-header">
+      <h2>🎮 Crear Cuenta</h2>
+      <p>Únete a GameStore y descubre el mejor catálogo de videojuegos</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="registro-form">
+      <!-- Información Personal -->
+      <div class="form-section">
+        <h3>👤 Información Personal</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre *</label>
+            <input
+              type="text"
+              id="nombre"
+              [(ngModel)]="datosRegistro.nombre"
+              name="nombre"
+              placeholder="Tu nombre"
+              required
+              class="form-input"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="apellido">Apellido *</label>
+            <input
+              type="text"
+              id="apellido"
+              [(ngModel)]="datosRegistro.apellido"
+              name="apellido"
+              placeholder="Tu apellido"
+              required
+              class="form-input"
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">📧 Email *</label>
+            <input
+              type="email"
+              id="email"
+              [(ngModel)]="datosRegistro.email"
+              name="email"
+              placeholder="tu@email.com"
+              required
+              class="form-input"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">📞 Teléfono</label>
+            <input
+              type="tel"
+              id="telefono"
+              [(ngModel)]="datosRegistro.telefono"
+              name="telefono"
+              placeholder="+1234567890"
+              class="form-input"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fechaNacimiento">🎂 Fecha de Nacimiento</label>
+          <input
+            type="date"
+            id="fechaNacimiento"
+            [(ngModel)]="datosRegistro.fechaNacimiento"
+            name="fechaNacimiento"
+            class="form-input"
+          >
+          <small class="helper-text">Debes tener al menos 13 años</small>
+        </div>
+      </div>
+
+      <!-- Seguridad -->
+      <div class="form-section">
+        <h3>🔒 Seguridad</h3>
+        
+        <div class="form-group password-group">
+          <label for="password">Contraseña *</label>
+          <div class="password-input-container">
+            <input
+              [type]="passwordVisible ? 'text' : 'password'"
+              id="password"
+              [(ngModel)]="datosRegistro.password"
+              name="password"
+              placeholder="Mínimo 6 caracteres"
+              required
+              class="form-input"
+            >
+            <button 
+              type="button"
+              (click)="togglePasswordVisibility('password')"
+              class="password-toggle"
+            >
+              {{ passwordVisible ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group password-group">
+          <label for="confirmarPassword">Confirmar Contraseña *</label>
+          <div class="password-input-container">
+            <input
+              [type]="confirmPasswordVisible ? 'text' : 'password'"
+              id="confirmarPassword"
+              [(ngModel)]="datosRegistro.confirmarPassword"
+              name="confirmarPassword"
+              placeholder="Repite tu contraseña"
+              required
+              class="form-input"
+            >
+            <button 
+              type="button"
+              (click)="togglePasswordVisibility('confirmPassword')"
+              class="password-toggle"
+            >
+              {{ confirmPasswordVisible ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="password-strength">
+          <div 
+            class="strength-bar" 
+            [class]="getPasswordStrengthClass()"
+          ></div>
+          <small>{{ getPasswordStrengthText() }}</small>
+        </div>
+      </div>
+
+      <!-- Términos y Condiciones -->
+      <div class="form-section">
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="datosRegistro.aceptaTerminos" 
+              name="aceptaTerminos"
+              required
+            >
+            <span class="checkmark"></span>
+            Acepto los <a href="#" class="link">términos y condiciones</a> y la 
+            <a href="#" class="link">política de privacidad</a> *
+          </label>
+        </div>
+
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="newsletter">
+            <span class="checkmark"></span>
+            Quiero recibir ofertas especiales y novedades por email
+          </label>
+        </div>
+      </div>
+
+      <!-- Mensajes -->
+      <div *ngIf="mensajeError" class="error-message">
+        ❌ {{ mensajeError }}
+      </div>
+
+      <div *ngIf="mensajeExito" class="success-message">
+        ✅ {{ mensajeExito }} Redirigiendo al login...
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-large" 
+          [disabled]="cargando"
+        >
+          <span *ngIf="cargando" class="spinner"></span>
+          {{ cargando ? 'Creando cuenta...' : 'Crear Cuenta' }}
+        </button>
+
+        <button 
+          type="button" 
+          (click)="rellenarDatosPrueba()"
+          class="btn btn-outline"
+        >
+          🧪 Rellenar datos de prueba
+        </button>
+      </div>
+    </form>
+
+    <!-- Enlace a login -->
+    <div class="registro-footer">
+      <p>¿Ya tienes cuenta? 
+        <a routerLink="/login" class="login-link">Inicia sesión aquí</a>
+      </p>
+    </div>
+  </div>
+</div>

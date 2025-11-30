@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-funciones',
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './funciones.html',
   styleUrl: './funciones.css',
 })
